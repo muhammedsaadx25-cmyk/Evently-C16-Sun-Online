@@ -4,6 +4,7 @@ import 'package:evently_sun_online/core/routes_manager/app_routes.dart';
 import 'package:evently_sun_online/core/utils/validator_utils.dart';
 import 'package:evently_sun_online/core/widgets/custom_elevated_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_form_field.dart';
+import 'package:evently_sun_online/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,9 +49,10 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text("Register")),
+      appBar: AppBar(title: Text(appLocalizations.register)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -72,7 +74,7 @@ class _RegisterState extends State<Register> {
                     CustomTextFormField(
                       controller: _nameController,
                       validator: ValidatorUtils.validateName,
-                      labelText: "Name",
+                      labelText: appLocalizations.name,
                       prefixIcon: Icons.person,
                       keyboardType: TextInputType.name,
                     ),
@@ -80,7 +82,7 @@ class _RegisterState extends State<Register> {
                     CustomTextFormField(
                       controller: _emailController,
                       validator: ValidatorUtils.validateEmail,
-                      labelText: "E-mail",
+                      labelText: appLocalizations.email,
                       prefixIcon: Icons.email,
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -89,7 +91,7 @@ class _RegisterState extends State<Register> {
                       controller: _passwordController,
                       validator: ValidatorUtils.validatePassword,
                       isSecure: securePassword,
-                      labelText: "Password",
+                      labelText:appLocalizations.password,
                       prefixIcon: Icons.lock,
                       suffixIcon: IconButton(
                         onPressed: _onTogglePasswordIconClicked,
@@ -114,7 +116,7 @@ class _RegisterState extends State<Register> {
                         return null;
                       },
                       isSecure: secureRePassword,
-                      labelText: "Re-Password",
+                      labelText: appLocalizations.re_password,
                       prefixIcon: Icons.lock,
                       suffixIcon: IconButton(
                         onPressed: _onToggleRePasswordIconClicked,
@@ -128,7 +130,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 16.h),
                     CustomElevatedButton(
-                      text: "Create Account",
+                      text: appLocalizations.create_account,
                       onPress: _createAccount,
                     ),
                     SizedBox(height: 16.h),
@@ -136,7 +138,7 @@ class _RegisterState extends State<Register> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Already Have Account ? ",
+                          "${appLocalizations.already_have_account} ",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         GestureDetector(
@@ -147,7 +149,7 @@ class _RegisterState extends State<Register> {
                             );
                           },
                           child: Text(
-                            "Login",
+                           appLocalizations.login,
                             style: GoogleFonts.inter(
                               fontSize: 16.sp,
                               color: ColorsManager.blue,

@@ -5,6 +5,7 @@ import 'package:evently_sun_online/core/widgets/custom_elevated_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_tab_bar.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_form_field.dart';
+import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:evently_sun_online/models/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,8 +23,10 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Create Event")),
+      appBar: AppBar(title: Text(appLocalizations.create_event)),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -35,57 +38,57 @@ class _CreateEventState extends State<CreateEvent> {
             ),
             SizedBox(height: 16.h),
             CustomTabBar(
-              categories: CategoryModel.categories,
+              categories: CategoryModel.getCategories(context),
               selectedBgColor: ColorsManager.blue,
               selectedFgColor: ColorsManager.white,
               unSelectedBgColor: Colors.transparent,
               unSelectedFgColor: ColorsManager.blue,
             ),
             SizedBox(height: 16.h),
-            Text("Title", style: Theme.of(context).textTheme.titleMedium),
+            Text(appLocalizations.title, style: Theme.of(context).textTheme.titleMedium),
             SizedBox(height: 8.h),
             CustomTextFormField(
-              hintText: "Event Title",
+              hintText: appLocalizations.event_title,
               keyboardType: TextInputType.text,
               prefixIcon: Icons.edit_note,
             ),
             SizedBox(height: 16.h),
-            Text("Description", style: Theme.of(context).textTheme.titleMedium),
+            Text(appLocalizations.description, style: Theme.of(context).textTheme.titleMedium),
             SizedBox(height: 8.h),
             CustomTextFormField(
-              hintText: "Event Description",
+              hintText: appLocalizations.event_description,
               keyboardType: TextInputType.text,
               maxLines: 4,
             ),
             SizedBox(height: 16.h),
             Row(
               children: [
-                Icon(Icons.date_range_rounded, color: ColorsManager.black),
+                Icon(Icons.date_range_rounded, ),
                 SizedBox(width: 4.w),
                 Text(
                  selectedDateTime.toFormattedDate,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Spacer(),
-                CustomTextButton(text: "Choose Data", onTap: _selectEventData),
+                CustomTextButton(text: appLocalizations.choose_date, onTap: _selectEventData),
               ],
             ),
             SizedBox(height: 16.h),
             Row(
               children: [
-                Icon(Icons.date_range_rounded, color: ColorsManager.black),
+                Icon(Icons.access_time,),
                 SizedBox(width: 4.w),
                 Text(
                  selectedDateTime.toFormattedTime,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Spacer(),
-                CustomTextButton(text: "Choose Time", onTap:_selectEventTime),
+                CustomTextButton(text:appLocalizations.choose_time, onTap:_selectEventTime),
 
               ],
             ),
             SizedBox(height: 24,),
-            CustomElevatedButton(text: "Add Event", onPress: (){})
+            CustomElevatedButton(text:appLocalizations.add_event, onPress: (){})
           ],
         ),
       ),
@@ -93,7 +96,9 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   void _selectEventData() async{
-  selectedDateTime = await  showDatePicker(context: context, firstDate: DateTime.now(), lastDate: DateTime.now().add(Duration(days: 365))) ?? selectedDateTime;
+  selectedDateTime = await  showDatePicker(
+    locale: Locale("ar"),
+      context: context, firstDate: DateTime.now(), lastDate: DateTime.now().add(Duration(days: 365))) ?? selectedDateTime;
   selectedDateTime = selectedDateTime.copyWith(hour: selectedTimeTemp.hour, minute: selectedTimeTemp.minute);
   print(selectedDateTime.toString());
   setState(() {
@@ -102,7 +107,8 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   void _selectEventTime() async{
-    selectedTimeTemp = await showTimePicker(context: context, initialTime: TimeOfDay.now()) ?? selectedTimeTemp;
+    selectedTimeTemp = await showTimePicker(
+        context: context, initialTime: TimeOfDay.now()) ?? selectedTimeTemp;
 selectedDateTime = selectedDateTime.copyWith(hour: selectedTimeTemp.hour, minute: selectedTimeTemp.minute);
   setState(() {
 

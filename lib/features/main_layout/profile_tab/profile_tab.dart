@@ -1,15 +1,22 @@
 import 'package:evently_sun_online/core/resources/assets_manager.dart';
 import 'package:evently_sun_online/core/resources/colors_manager.dart';
 import 'package:evently_sun_online/features/main_layout/profile_tab/custom_drop_down_item.dart';
+import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
+import 'package:evently_sun_online/providers/language_provider.dart';
+import 'package:evently_sun_online/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+var themeProvider = Provider.of<ThemeProvider>(context);
+var langProvider = Provider.of<LanguageProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,14 +61,20 @@ class ProfileTab extends StatelessWidget {
         ),
         SizedBox(height: 24.sp),
         CustomDropDownItem(
-          label: "Theme",
-          selectedLabel: "Light",
-          menuItems: ["Light", "Dark"],
+          onChange: (newTheme){
+           themeProvider.changeAppTheme(newTheme == appLocalizations.light? ThemeMode.light : ThemeMode.dark);
+          },
+          label: appLocalizations.theme,
+          selectedLabel: themeProvider.isDark ? appLocalizations.dark : appLocalizations.light,
+          menuItems: [appLocalizations.light, appLocalizations.dark],
         ),
         SizedBox(height: 16.h),
         CustomDropDownItem(
-          label: "Language",
-          selectedLabel: "English",
+          onChange: (newLang){
+           langProvider.changeAppLang(newLang == "English" ? "en" : "ar") ;
+          },
+          label: appLocalizations.language,
+          selectedLabel: langProvider.isEnglish ? "English" : "Arabic",
           menuItems: ["English", "Arabic"],
         ),
         Spacer(flex: 7),
@@ -83,7 +96,7 @@ class ProfileTab extends StatelessWidget {
               children: [
                 Icon(Icons.logout),
                 SizedBox(width: 8.w),
-                Text("Logout"),
+                Text(appLocalizations.logout),
               ],
             ),
           ),

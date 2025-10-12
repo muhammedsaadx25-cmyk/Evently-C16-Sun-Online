@@ -61,7 +61,7 @@ borderRadius: BorderRadius.circular(14.r),
               padding:  REdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(child: Text(event.title, style: GoogleFonts.inter(fontSize: 14.sp, fontWeight: FontWeight.bold, color: ColorsManager.black),)),
+                  Expanded(child: Text(event.title, style: Theme.of(context).textTheme.bodyMedium),),
                   Icon(Icons.favorite_border, color: ColorsManager.blue,)
                 ],
               ),

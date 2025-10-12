@@ -4,6 +4,7 @@ import 'package:evently_sun_online/features/main_layout/favourite_tab/favourite_
 import 'package:evently_sun_online/features/main_layout/home_tab/home_tab.dart';
 import 'package:evently_sun_online/features/main_layout/map_tab/map_tab.dart';
 import 'package:evently_sun_online/features/main_layout/profile_tab/profile_tab.dart';
+import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -17,9 +18,11 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   List<Widget> tabs = [HomeTab(), MapTab(), FavouriteTab(), ProfileTab()];
   int selectedIndex = 0;
-
+late AppLocalizations appLocalizations;
   @override
   Widget build(BuildContext context) {
+   appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       extendBody: true,
       body: tabs[selectedIndex],
@@ -46,7 +49,7 @@ class _MainLayoutState extends State<MainLayout> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(selectedIndex == 0 ? Icons.home : Icons.home_outlined),
-            label: "Home",
+            label: appLocalizations.home,
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -54,19 +57,19 @@ class _MainLayoutState extends State<MainLayout> {
                   ? Icons.location_on
                   : Icons.location_on_outlined,
             ),
-            label: "Map",
+            label: appLocalizations.map,
           ),
           BottomNavigationBarItem(
             icon: Icon(
               selectedIndex == 2 ? Icons.favorite : Icons.favorite_border,
             ),
-            label: "Favourite",
+            label: appLocalizations.favourite,
           ),
           BottomNavigationBarItem(
             icon: Icon(
               selectedIndex == 3 ? Icons.person : Icons.person_2_outlined,
             ),
-            label: "Profile",
+            label: appLocalizations.profile,
           ),
         ],
       ),

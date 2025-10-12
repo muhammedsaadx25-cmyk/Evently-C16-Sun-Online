@@ -7,6 +7,7 @@ import 'package:evently_sun_online/core/utils/validator_utils.dart';
 import 'package:evently_sun_online/core/widgets/custom_elevated_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_form_field.dart';
+import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,6 +41,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -55,7 +58,7 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 16.h),
                   CustomTextFormField(
                     validator: ValidatorUtils.validateEmail,
-                    labelText: "E-mail",
+                    labelText: appLocalizations.email,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email,
                   ),
@@ -63,7 +66,7 @@ class _LoginState extends State<Login> {
                   CustomTextFormField(
                     validator: ValidatorUtils.validatePassword,
                     isSecure: securePassword,
-                    labelText: "Password",
+                    labelText:appLocalizations.password,
                     keyboardType: TextInputType.visiblePassword,
                     prefixIcon: Icons.lock,
                     suffixIcon: IconButton(
@@ -75,18 +78,18 @@ class _LoginState extends State<Login> {
                   ),
                   SizedBox(height: 16.h),
                   CustomTextButton(
-                    text: "Forget Password",
+                    text: appLocalizations.forget_password,
                     onTap: () {},
                     alignment: Alignment.centerRight,
                   ),
                   SizedBox(height: 24.h),
-                  CustomElevatedButton(text: "Login", onPress:_login),
+                  CustomElevatedButton(text: appLocalizations.login, onPress:_login),
                   SizedBox(height: 24.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have account ? ",
+                       "${appLocalizations.dont_have_account} ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
@@ -97,7 +100,7 @@ class _LoginState extends State<Login> {
                           );
                         },
                         child: Text(
-                          "Create account",
+                         appLocalizations.create_account,
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
                             color: ColorsManager.blue,
@@ -121,7 +124,7 @@ class _LoginState extends State<Login> {
                           endIndent: 20,
                         ),
                       ),
-                      Text("or", style: Theme.of(context).textTheme.bodySmall),
+                      Text(appLocalizations.or, style: Theme.of(context).textTheme.bodySmall),
                       Expanded(
                         child: Divider(
                           thickness: 1,
@@ -148,7 +151,7 @@ class _LoginState extends State<Login> {
                         Image.asset(ImageAssets.google),
                         SizedBox(width: 10.w),
                         Text(
-                          "Login With Google",
+                          appLocalizations.login_with_google,
                           style: GoogleFonts.inter(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w500,
