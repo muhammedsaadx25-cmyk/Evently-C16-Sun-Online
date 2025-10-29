@@ -1,17 +1,25 @@
 import 'package:evently_sun_online/core/resources/assets_manager.dart';
 import 'package:evently_sun_online/core/resources/colors_manager.dart';
+import 'package:evently_sun_online/core/routes_manager/app_routes.dart';
 import 'package:evently_sun_online/features/main_layout/profile_tab/custom_drop_down_item.dart';
 import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
+import 'package:evently_sun_online/models/user_model.dart';
 import 'package:evently_sun_online/providers/language_provider.dart';
 import 'package:evently_sun_online/providers/theme_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
 
+  @override
+  State<ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<ProfileTab> {
   @override
   Widget build(BuildContext context) {
     AppLocalizations appLocalizations = AppLocalizations.of(context)!;
@@ -38,7 +46,7 @@ var langProvider = Provider.of<LanguageProvider>(context);
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Moo Saad",
+                     UserModel.currentUser!.name,
                       style: GoogleFonts.inter(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -46,7 +54,7 @@ var langProvider = Provider.of<LanguageProvider>(context);
                       ),
                     ),
                     Text(
-                      "mmoosaad@gmail.com",
+                     UserModel.currentUser!.email,
                       style: GoogleFonts.inter(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w500,
@@ -91,7 +99,7 @@ var langProvider = Provider.of<LanguageProvider>(context);
                 fontWeight: FontWeight.w400,
               ),
             ),
-            onPressed: () {},
+            onPressed:_logout,
             child: Row(
               children: [
                 Icon(Icons.logout),
@@ -104,5 +112,10 @@ var langProvider = Provider.of<LanguageProvider>(context);
         Spacer(flex: 3),
       ],
     );
+  }
+
+  void _logout() async{
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, AppRoutes.login);
   }
 }

@@ -1,10 +1,15 @@
 import 'package:evently_sun_online/core/resources/assets_manager.dart';
 import 'package:evently_sun_online/core/resources/colors_manager.dart';
 import 'package:evently_sun_online/core/routes_manager/app_routes.dart';
+import 'package:evently_sun_online/core/utils/UI_Utils.dart';
 import 'package:evently_sun_online/core/utils/validator_utils.dart';
 import 'package:evently_sun_online/core/widgets/custom_elevated_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_form_field.dart';
+import 'package:evently_sun_online/firebase/firebase_service.dart';
 import 'package:evently_sun_online/l10n/app_localizations.dart';
+import 'package:evently_sun_online/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -91,7 +96,7 @@ class _RegisterState extends State<Register> {
                       controller: _passwordController,
                       validator: ValidatorUtils.validatePassword,
                       isSecure: securePassword,
-                      labelText:appLocalizations.password,
+                      labelText: appLocalizations.password,
                       prefixIcon: Icons.lock,
                       suffixIcon: IconButton(
                         onPressed: _onTogglePasswordIconClicked,
@@ -149,7 +154,7 @@ class _RegisterState extends State<Register> {
                             );
                           },
                           child: Text(
-                           appLocalizations.login,
+                            appLocalizations.login,
                             style: GoogleFonts.inter(
                               fontSize: 16.sp,
                               color: ColorsManager.blue,
@@ -184,9 +189,28 @@ class _RegisterState extends State<Register> {
     });
   }
 
-  void _createAccount() {
+  void _createAccount() async {
     if (_formKey.currentState?.validate() == false) return;
-
-    // logic
+    try {
+      UIUtils.showLoading(context, isDismissable: false);
+      UserCredential userCredential = await FirebaseService.register(_emailController.text, _passwordController.text);
+      await FirebaseService.addUserToFireStore(UserModel(id: userCredential.user!.uid, name: _nameController.text, email: _emailController.text, favouriteEventsIds: []));
+      UIUtils.hideDialog(context);
+      UIUtils.showToast("Successfully registration", Colors.green);
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    } on FirebaseAuthException catch (exception) {
+     UIUtils.hideDialog(context);
+      if (exception.code == 'weak-password') {
+        UIUtils.showToast('The password provided is too weak.', Colors.red);
+      } else if (exception.code == 'email-already-in-use') {
+        UIUtils.showToast(
+          'The account already exists for that email.',
+          Colors.red,
+        );
+      }
+    } catch (exception) {
+      UIUtils.hideDialog(context);
+      UIUtils.showToast('Failed to register', Colors.red);
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:evently_sun_online/core/resources/colors_manager.dart';
 import 'package:evently_sun_online/core/widgets/event_item.dart' show EventItem;
+import 'package:evently_sun_online/firebase/firebase_service.dart';
 import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:evently_sun_online/models/category_model.dart';
 import 'package:evently_sun_online/models/event_model.dart' show EventModel;
@@ -31,15 +32,21 @@ class FavouriteTab extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h,),
-          Expanded(child: ListView.builder(itemBuilder: (context, index)=>  EventItem(
-            event: EventModel(
-              category: CategoryModel.getCategories(context)[2],
-              title: "Meeting for Updating The Development Method ",
-              description: "Meeting for Updating The Development Method ",
-              dateTime: DateTime.now(),
-              timeOfDay: TimeOfDay.now(),
-            ),
-          ), itemCount: 20,))
+          FutureBuilder(future: FirebaseService.getFavouriteEvents(context),
+              builder: (context, snapshot){
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return Center(child: CircularProgressIndicator(),);
+            }
+            if(snapshot.hasError){
+              return Center(child: Text(snapshot.error.toString()),);
+            }
+            List<EventModel> favouriteEvents = snapshot.data ?? [];
+            return Expanded(child: ListView.builder(itemBuilder: (context, index)=>  EventItem(
+              event: favouriteEvents[index],
+              showAsFavourite: true,
+            ), itemCount: favouriteEvents.length, ));
+              })
+
 
         ],
       ),

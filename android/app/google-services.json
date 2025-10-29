@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "391875983213",
+    "project_id": "evently-c16-online-sun",
+    "storage_bucket": "evently-c16-online-sun.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:391875983213:android:04afe31eec653dddb18c64",
+        "android_client_info": {
+          "package_name": "com.example.evently_sun_online"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4D-kwuIwJ3Xrm_iz1jHyfGbnxBIxaRjE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

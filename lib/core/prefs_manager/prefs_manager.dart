@@ -36,4 +36,7 @@ class PrefsManager {
     return prefs.getString(CacheConstant.languageKey);
   }
 
+
+
+
 }

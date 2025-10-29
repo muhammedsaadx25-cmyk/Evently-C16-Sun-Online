@@ -1,13 +1,19 @@
+import 'package:evently_sun_online/core/prefs_manager/prefs_manager.dart';
 import 'package:evently_sun_online/core/resources/assets_manager.dart';
 import 'package:evently_sun_online/core/resources/colors_manager.dart'
     show ColorsManager;
 import 'package:evently_sun_online/core/routes_manager/app_routes.dart'
     show AppRoutes;
+import 'package:evently_sun_online/core/utils/UI_Utils.dart';
 import 'package:evently_sun_online/core/utils/validator_utils.dart';
 import 'package:evently_sun_online/core/widgets/custom_elevated_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_button.dart';
 import 'package:evently_sun_online/core/widgets/custom_text_form_field.dart';
-import 'package:evently_sun_online/l10n/app_localizations.dart' show AppLocalizations;
+import 'package:evently_sun_online/firebase/firebase_service.dart';
+import 'package:evently_sun_online/l10n/app_localizations.dart'
+    show AppLocalizations;
+import 'package:evently_sun_online/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +30,7 @@ class _LoginState extends State<Login> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -31,13 +38,13 @@ class _LoginState extends State<Login> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
   }
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +64,7 @@ class _LoginState extends State<Login> {
                 children: [
                   SizedBox(height: 16.h),
                   CustomTextFormField(
+                    controller: _emailController,
                     validator: ValidatorUtils.validateEmail,
                     labelText: appLocalizations.email,
                     keyboardType: TextInputType.emailAddress,
@@ -64,15 +72,18 @@ class _LoginState extends State<Login> {
                   ),
                   SizedBox(height: 16.h),
                   CustomTextFormField(
+                    controller: _passwordController,
                     validator: ValidatorUtils.validatePassword,
                     isSecure: securePassword,
-                    labelText:appLocalizations.password,
+                    labelText: appLocalizations.password,
                     keyboardType: TextInputType.visiblePassword,
                     prefixIcon: Icons.lock,
                     suffixIcon: IconButton(
                       onPressed: _onTogglePasswordIconClicked,
                       icon: Icon(
-                        securePassword ? Icons.visibility_off : Icons.visibility,
+                        securePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                     ),
                   ),
@@ -83,13 +94,16 @@ class _LoginState extends State<Login> {
                     alignment: Alignment.centerRight,
                   ),
                   SizedBox(height: 24.h),
-                  CustomElevatedButton(text: appLocalizations.login, onPress:_login),
+                  CustomElevatedButton(
+                    text: appLocalizations.login,
+                    onPress: _login,
+                  ),
                   SizedBox(height: 24.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                       "${appLocalizations.dont_have_account} ",
+                        "${appLocalizations.dont_have_account} ",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       GestureDetector(
@@ -100,7 +114,7 @@ class _LoginState extends State<Login> {
                           );
                         },
                         child: Text(
-                         appLocalizations.create_account,
+                          appLocalizations.create_account,
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
                             color: ColorsManager.blue,
@@ -124,7 +138,10 @@ class _LoginState extends State<Login> {
                           endIndent: 20,
                         ),
                       ),
-                      Text(appLocalizations.or, style: Theme.of(context).textTheme.bodySmall),
+                      Text(
+                        appLocalizations.or,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       Expanded(
                         child: Divider(
                           thickness: 1,
@@ -176,7 +193,24 @@ class _LoginState extends State<Login> {
     });
   }
 
-  _login(){
-    if(_formKey.currentState?.validate() == false) return;
+  void _login() async{
+    if (_formKey.currentState?.validate() == false) return;
+    try{
+      UIUtils.showLoading(context, isDismissable: false);
+      UserCredential userCredential = await FirebaseService.login(_emailController.text, _passwordController.text);
+UserModel.currentUser  = await FirebaseService.getUserFromFireStore(userCredential.user!.uid);
+
+      UIUtils.hideDialog(context);
+      UIUtils.showToast("User Logged-In Successfully", Colors.green);
+      Navigator.pushReplacementNamed(context, AppRoutes.mainLayout,);
+    }on FirebaseAuthException catch(exception){
+      print(exception.code);
+      UIUtils.hideDialog(context);
+     UIUtils.showToast("Invalid email or password", Colors.red);
+    }catch(exception){
+      UIUtils.hideDialog(context);
+      UIUtils.showToast("Failed to login", Colors.red);
+print(exception.toString());
+    }
   }
 }

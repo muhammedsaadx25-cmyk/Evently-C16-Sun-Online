@@ -1,15 +1,23 @@
 import 'package:evently_sun_online/core/extensions/date_time_ex.dart';
 import 'package:evently_sun_online/core/resources/assets_manager.dart';
 import 'package:evently_sun_online/core/resources/colors_manager.dart';
+import 'package:evently_sun_online/firebase/firebase_service.dart';
 import 'package:evently_sun_online/models/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class EventItem extends StatelessWidget {
-   EventItem({super.key, required this.event});
+class EventItem extends StatefulWidget {
+   EventItem({super.key, required this.event,  this.showAsFavourite});
 final EventModel event;
+bool? showAsFavourite;
+
+  @override
+  State<EventItem> createState() => _EventItemState();
+}
+
+class _EventItemState extends State<EventItem> {
 List<String> months = [
   "Jan",
   "Feb",
@@ -24,6 +32,8 @@ List<String> months = [
   "Nov",
   "Dec"
 ];
+late bool isFavourite = widget.showAsFavourite ?? false;
+
   @override
   Widget build(BuildContext context) {
 
@@ -49,8 +59,8 @@ borderRadius: BorderRadius.circular(14.r),
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(event.dateTime.getDay, style: GoogleFonts.inter(fontSize: 20.sp, fontWeight: FontWeight.bold, color: ColorsManager.blue),),
-                  Text(event.dateTime.getMonthName, style: GoogleFonts.inter(fontSize: 14.sp, fontWeight: FontWeight.bold, color: ColorsManager.blue),),
+                  Text(widget.event.dateTime.getDay, style: GoogleFonts.inter(fontSize: 20.sp, fontWeight: FontWeight.bold, color: ColorsManager.blue),),
+                  Text(widget.event.dateTime.getMonthName, style: GoogleFonts.inter(fontSize: 14.sp, fontWeight: FontWeight.bold, color: ColorsManager.blue),),
                 ],
               ),
             ),
@@ -61,8 +71,8 @@ borderRadius: BorderRadius.circular(14.r),
               padding:  REdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(child: Text(event.title, style: Theme.of(context).textTheme.bodyMedium),),
-                  Icon(Icons.favorite_border, color: ColorsManager.blue,)
+                  Expanded(child: Text(widget.event.title, style: Theme.of(context).textTheme.bodyMedium),),
+                IconButton(onPressed: _markEventAsFavourite, icon:   Icon(isFavourite ? Icons.favorite : Icons.favorite_border, color: ColorsManager.blue,))
                 ],
               ),
             ),
@@ -72,6 +82,19 @@ borderRadius: BorderRadius.circular(14.r),
       ),
     );
   }
-  
 
+  void _markEventAsFavourite() async{
+    if(isFavourite){
+     await  FirebaseService.removeEventFromFavourite(widget.event);
+     isFavourite = false;
+    }else{
+    await FirebaseService.addEventToFavourite(widget.event);
+    isFavourite = true;
+
+    }
+
+    setState(() {
+
+    });
+  }
 }
